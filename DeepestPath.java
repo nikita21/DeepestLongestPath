@@ -68,12 +68,16 @@ public class DeepestPath {
 				{
 					tmp[i][j] = findPathFromACell(i, j, ar, tmp);
 				}
-				if(tmp[i][j] >= result) {
-					result = tmp[i][j];
+
+				if(tmp[i][j] == result) {
 					int dummy = ar[i][j] - minValue(ar, tmp, i, j);
 					if(dummy > drop)
 						drop = dummy;
 				}
+				else if(tmp[i][j] > result) {
+					result = tmp[i][j];
+					drop = ar[i][j] - minValue(ar, tmp, i, j);
+				}				
 			}
 		}
 		System.out.println("Drop: " + drop);
