@@ -14,7 +14,8 @@ public class DeepestPath {
 						{2,5,9,3},
 						{6,3,2,5},
 						{4,4,1,6},
-					 };*/
+					 };
+		*/
 		int[][] tmp = new int[rows][cols];
 		for(int i = 0; i < rows; i++) {
 			for(int j = 0; j < cols; j++) {
@@ -57,7 +58,7 @@ public class DeepestPath {
 
 	private static int maxLengthPath(int[][] ar, int[][] tmp, int rows, int cols) {
 		int result = 1;
-		int maximumValue = Integer.MIN_VALUE;
+		int drop = 0;
 
 		for(int i = 0; i < rows; i++) 
 		{
@@ -69,17 +70,18 @@ public class DeepestPath {
 				}
 				if(tmp[i][j] >= result) {
 					result = tmp[i][j];
-					if(ar[i][j] > maximumValue)
-						maximumValue = ar[i][j];
+					int dummy = ar[i][j] - minValue(ar, tmp, i, j);
+					if(dummy > drop)
+						drop = dummy;
 				}
 			}
 		}
-		System.out.println("Drop: " + (maximumValue - 1));
+		System.out.println("Drop: " + drop);
 		return result;
 	}
 
 	private static int findPathFromACell(int i, int j, int[][] ar, int[][] tmp) {
-		int rows = ar.length;
+
 		if(tmp[i][j] != -1)
 			return tmp[i][j];
 
@@ -92,16 +94,46 @@ public class DeepestPath {
 		}
 
 		if(i > 0 && (ar[i][j] > ar[i-1][j])){
-			tmp[i][j] = Math.max(tmp[i][j], (1+findPathFromACell(i-1, j, ar, tmp)));
+			tmp[i][j] = Math.max(tmp[i][j], (1 + findPathFromACell(i-1, j, ar, tmp)));
 		}
 
 		if(i < rows-1 && (ar[i][j] > ar[i+1][j])){
-			tmp[i][j] = Math.max(tmp[i][j], (1+findPathFromACell(i+1, j, ar, tmp)));
+			tmp[i][j] = Math.max(tmp[i][j], (1 + findPathFromACell(i+1, j, ar, tmp)));
 		}
 
 		if(tmp[i][j] == -1)
 			tmp[i][j] = 1;
 
 		return tmp[i][j];
+	}
+
+	private static int minValue(int[][] ar, int[][] tmp, int i, int j) {
+
+		if(tmp[i][j] == 1) {
+			//System.out.println("gotcha******** " + ar[i][j]);
+			return ar[i][j];
+		}
+
+		if(j < cols-1 && tmp[i][j] == (tmp[i][j+1] + 1)) {
+				//System.out.println("1:******** " + tmp[i][j+1]);
+				return minValue(ar, tmp, i, j+1);
+		}
+
+		if(j > 0 && tmp[i][j] == (tmp[i][j-1] + 1)) {
+				//System.out.println("2:******** " + tmp[i][j-1]);
+				return minValue(ar, tmp, i, j-1);
+		}
+
+		if(i > 0 && tmp[i][j] == (tmp[i-1][j] + 1)) {
+				//System.out.println("3:********* " + tmp[i-1][j]);
+				return minValue(ar, tmp, i-1, j);
+		}
+
+		if(i < rows-1 && tmp[i][j] == (tmp[i+1][j] + 1)) {
+				//System.out.println("4:********* " + tmp[i+1][j]);
+				return minValue(ar, tmp, i+1, j);
+		}
+
+		return ar[i][j];
 	}
 }
